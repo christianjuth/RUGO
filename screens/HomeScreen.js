@@ -1,15 +1,21 @@
 import React from 'react';
 import { YellowBox, ScrollView, AppState, StyleSheet, Text, View } from 'react-native';
-YellowBox.ignoreWarnings(['Require cycle:']);
+// YellowBox.ignoreWarnings(['Require cycle:']);
+
+import GlobalStyles from '../assets/Styles';
 
 let transloc = require('../transloc.js');
 let session = new transloc(require('../transloc-config').apiKey);
 
-
 export default class App extends React.Component {
   static navigationOptions = ({ navigation }) => {
     return {
-      title: navigation.getParam('title'),
+      headerTitle: (
+        <View>
+          <Text style={GlobalStyles.headerTitle}>Bus Arrivals</Text>
+          <Text style={GlobalStyles.headerSub}>{navigation.getParam('sub')}</Text>
+        </View>
+      )
     };
   };
 
@@ -22,18 +28,37 @@ export default class App extends React.Component {
       arrivals: {},
       state: 'active'
     };
+  }
+
+  checkLocation() {
+    let stop = session.closestStop(loc.lat, loc.lng);
+    if(stop.stop_id != this.state.stopId){
+      this.setState({
+        stopId: stop.stop_id,
+        stopTitle: stop.name
+      });
+      this.props.navigation.setParams({sub: stop.name});
+    }
+    
+    this.refresh();
+  }
+
+
+  componentDidMount() {
+    AppState.addEventListener('change', this._handleAppStateChange);
 
     session.load(() => {
       this.checkLocation();
-      setInterval(() => { 
+      this.intervalOne = setInterval(() => { 
         this.checkLocation();
-      }, 45000);
+      }, 5000);
     });
 
     // count down
-    setInterval(() => {
+    this.intervalTwo = setInterval(() => {
       Object.keys(this.state.arrivals).forEach(r => {
-        this.state.arrivals[r].estimates = this.state.arrivals[r].estimates.map(p => {
+        let arrivals = this.state.arrivals[r];
+        arrivals.estimates = arrivals.estimates.map(p => {
           return p - 1000;
         }).filter(r => r > 0);
       });
@@ -41,39 +66,14 @@ export default class App extends React.Component {
       if(Object.keys(this.state.arrivals).length > 0){
         this.setState(this.state);
       }
+      
     }, 1000);
-  }
-
-  checkLocation() {
-    navigator.geolocation.getCurrentPosition(
-      position => {
-        const loc = position.coords;
-
-        let stop = session.closestStop(loc.latitude, loc.longitude);
-        if(stop.stop_id != this.state.stopId){
-          this.setState({
-            stopId: stop.stop_id,
-            stopTitle: stop.name
-          });
-          this.props.navigation.setParams({title: stop.name});
-        }
-        
-        this.refresh();
-      },
-      error => {
-        console.log(error.message);
-      },
-      { enableHighAccuracy: false, timeout: 20000, maximumAge: 20000 }
-    );
-  }
-
-
-  componentDidMount() {
-    AppState.addEventListener('change', this._handleAppStateChange);
   }
 
   componentWillUnmount() {
     AppState.removeEventListener('change', this._handleAppStateChange);
+    clearInterval(this.intervalOne);
+    clearInterval(this.intervalTwo);
   }
 
   _handleAppStateChange = (nextAppState) => {
@@ -110,11 +110,15 @@ export default class App extends React.Component {
 
             let text = 'In ' + s + ' minutes';
 
-            return (<View style={styles.route} key={key}>
+           
+
+            return (
+              <View style={styles.route} key={key}>
                       <Text style={styles.routeTitle}>{r.name}</Text>
                       <Text style={styles.routeTitle}>{text}</Text>
                       <Text style={styles.routeInfo}>{r.destination}</Text>
-                    </View>);
+                    </View>
+            );
           })
         }
         </ScrollView>

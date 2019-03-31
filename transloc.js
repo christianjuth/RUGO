@@ -1,3 +1,5 @@
+let ruLocate = require('./ruLocate.js');
+
 import { AsyncStorage } from "react-native";
 
 class transloc{
@@ -106,24 +108,6 @@ class transloc{
 	}
 
 
-	distance(lat1,lon1,lat2,lon2) {
-        function deg2rad(deg) {
-          return deg * (Math.PI/180)
-        }
-
-      var R = 6371; // Radius of the earth in km
-      var dLat = deg2rad(lat2-lat1);  // deg2rad below
-      var dLon = deg2rad(lon2-lon1); 
-      var a = 
-        Math.sin(dLat/2) * Math.sin(dLat/2) +
-        Math.cos(deg2rad(lat1)) * Math.cos(deg2rad(lat2)) * 
-        Math.sin(dLon/2) * Math.sin(dLon/2); 
-      var c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1-a)); 
-      var d = R * c; // Distance in km
-      return d;
-    }
-
-
 	closestStop(lat, lng) {
         let stopArray = [];
 
@@ -131,58 +115,20 @@ class transloc{
             stopArray.push(this.data.stops[s]);
         });
 
+        stopArray = stopArray.map(stop => {
+        	let stopLoc = stop.location;
+        	stop.distance = ruLocate.distance(lat, lng, stopLoc.lat, stopLoc.lng);
+        	return stop;
+        })
+
         stopArray.sort((a, b) => {
-        	a = a.location;
-        	b = b.location;
-            return this.distance(lat, lng, a.lat, a.lng) > this.distance(lat, lng, b.lat, b.lng) ? 1 : -1;
+            return a.distance > b.distance ? 1 : -1;
         });
 
         let stop = stopArray[0];
-        stop.campus = this.closestCampus(stop.location.lat, stop.location.lng);
+        stop.campus = ruLocate.closestCampus(stop.location.lat, stop.location.lng);
         return stop;
     }
-
-
-	closestCampus(lat, lng) {
-		let campuses = [
-			{
-				name: 'College Ave',
-				location: {
-					lat: 40.503028, 
-					lng: -74.450470
-				}
-			},
-			{
-				name: 'Cook/Douglass',
-				location: {
-					lat: 40.483457, 
-					lng: -74.435324
-				}
-			},
-			{
-				name: 'Busch',
-				location: {
-					lat: 40.521025, 
-					lng: -74.460928
-				}
-			},
-			{
-				name: 'Livingston',
-				location: {
-					lat: 40.522801, 
-					lng: -74.436524
-				}
-			}
-		];
-
-		campuses.sort((a, b) => {
-        	a = a.location;
-        	b = b.location;
-            return this.distance(lat, lng, a.lat, a.lng) > this.distance(lat, lng, b.lat, b.lng) ? 1 : -1;
-        });
-
-        return campuses[0].name;
-	}
 
 
 	routeName(routeId) {

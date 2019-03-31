@@ -1,5 +1,5 @@
 import React from 'react';
-import { Platform, StatusBar, StyleSheet, View } from 'react-native';
+import { Platform, AsyncStorage, StatusBar, StyleSheet, View } from 'react-native';
 import { AppLoading, Asset, Font, Icon } from 'expo';
 import AppNavigator from './navigation/AppNavigator';
 
@@ -7,6 +7,46 @@ export default class App extends React.Component {
   state = {
     isLoadingComplete: false,
   };
+
+  updateLocation() {
+    navigator.geolocation.getCurrentPosition(
+      position => {
+        const loc = position.coords;
+        global.loc = {
+          lat: loc.latitude,
+          lng: loc.longitude
+        };
+      },
+      error => {
+        console.log(error.message);
+      },
+      { enableHighAccuracy: false, timeout: 20000, maximumAge: 20000 }
+    );
+  }
+
+  initStorage() {
+    let storage = require('./storage');
+    Object.keys(storage).forEach(key => {
+      AsyncStorage.getItem(key)
+      .then(data => {
+        if(data == null){
+          AsyncStorage.setItem(key, storage[key]);
+        }
+      });
+    });
+  }
+
+  componentDidMount() {
+    this.initStorage();
+    this.updateLocation();
+    this.interval = setInterval(() => {
+      this.updateLocation();
+    }, 5000);
+  }
+
+  componentWillUnmount() {
+    clearInterval(this.interval);
+  }
 
   render() {
     StatusBar.setBarStyle('dark-content', true);

@@ -13,13 +13,13 @@ let stackOptions = {
   defaultNavigationOptions: {
     headerStyle: {
       backgroundColor: Colors.rutgers,
-      height: 60
+      height: 70
     },
     headerTintColor: Colors.tabIconSelected,
     headerTitleStyle: {
       fontWeight: 'bold',
       fontSize: 22
-    },
+    }
   },
 };
 
@@ -28,7 +28,7 @@ const HomeStack = createStackNavigator({
 }, stackOptions);
 
 HomeStack.navigationOptions = {
-  tabBarLabel: 'Bus',
+  tabBarLabel: 'RU Bus',
   tabBarIcon: ({ focused }) => (
     <TabBarIcon
       focused={focused}
@@ -58,11 +58,11 @@ const SettingsStack = createStackNavigator({
 }, stackOptions);
 
 SettingsStack.navigationOptions = {
-  tabBarLabel: 'Search',
+  tabBarLabel: 'Settings',
   tabBarIcon: ({ focused }) => (
     <TabBarIcon
       focused={focused}
-      name={Platform.OS === 'ios' ? 'ios-search' : 'md-search'}
+      name={Platform.OS === 'ios' ? 'ios-settings' : 'md-settings'}
     />
   ),
 };
