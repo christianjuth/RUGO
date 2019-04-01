@@ -6,6 +6,7 @@ import { LinearGradient } from 'expo';
 import TabBarIcon from '../components/TabBarIcon';
 import HomeScreen from '../screens/HomeScreen';
 import ParkingScreen from '../screens/ParkingScreen';
+import SearchScreen from '../screens/SearchScreen';
 import SettingsScreen from '../screens/SettingsScreen';
 
 import Colors from '../constants/Colors';
@@ -69,6 +70,22 @@ ParkingStack.navigationOptions = {
   ),
 };
 
+
+const SearchStack = createStackNavigator({
+  Search: SearchScreen,
+}, stackOptions);
+
+SearchStack.navigationOptions = {
+  tabBarLabel: 'Search',
+  tabBarIcon: ({ focused }) => (
+    <TabBarIcon
+      focused={focused}
+      name={Platform.OS === 'ios' ? 'ios-search' : 'md-search'}
+    />
+  ),
+};
+
+
 const SettingsStack = createStackNavigator({
   Settings: SettingsScreen,
 }, stackOptions);
@@ -86,6 +103,7 @@ SettingsStack.navigationOptions = {
 export default createBottomTabNavigator({
   HomeStack,
   ParkingStack,
+  SearchStack,
   SettingsStack,
 }, {
     tabBarOptions: {

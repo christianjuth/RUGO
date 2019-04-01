@@ -1,5 +1,5 @@
 import React from 'react';
-import { Picker, View, AsyncStorage, Text, StyleSheet } from 'react-native';
+import { Picker, View, AsyncStorage, Text, StyleSheet, Button } from 'react-native';
 
 let data = require('../data');
 
@@ -32,6 +32,8 @@ export default class SettingsScreen extends React.Component {
       return(<View></View>);
     }
 
+    const {navigate} = this.props.navigation;
+
     return (
     	<View style={styles.container}>
     		<Text style={styles.title}>Parking Pass</Text>
@@ -50,6 +52,11 @@ export default class SettingsScreen extends React.Component {
 				  	})
 				  }
 				</Picker>
+
+        <Button
+        title="Go home"
+        onPress={() => navigate('Home')}
+      />
     	</View>
     );
   }

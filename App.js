@@ -1,6 +1,6 @@
 import React from 'react';
 import { Platform, AsyncStorage, StatusBar, StyleSheet, View } from 'react-native';
-import { AppLoading, Asset, Font, Icon, LinearGradient } from 'expo';
+import { AppLoading, Asset, Font, Icon, LinearGradient, Location } from 'expo';
 import AppNavigator from './navigation/AppNavigator';
 
 import Colors from './constants/Colors';
@@ -22,7 +22,7 @@ export default class App extends React.Component {
       error => {
         console.log(error.message);
       },
-      { enableHighAccuracy: false, timeout: 20000, maximumAge: 20000 }
+      { enableHighAccuracy: false, timeout: 20000, maximumAge: 1000 }
     );
   }
 
@@ -44,6 +44,10 @@ export default class App extends React.Component {
     this.interval = setInterval(() => {
       this.updateLocation();
     }, 5000);
+
+    // Location.watchHeadingAsync((data) => {
+    //   global.compas = data;
+    // });
   }
 
   componentWillUnmount() {

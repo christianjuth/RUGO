@@ -55,7 +55,8 @@ export default class LinksScreen extends React.Component {
 
   checkLocation() {
     let lots = ruLocate.closestLots(this.state.zone, loc.lat, loc.lng);
-    this.props.navigation.setParams({sub: this.state.zone});
+    let campus = ruLocate.closestCampus(loc.lat, loc.lng);
+    this.props.navigation.setParams({sub: this.state.zone + ' - ' + campus});
     this.setState({
       lots: lots
     });
@@ -87,9 +88,14 @@ export default class LinksScreen extends React.Component {
               });
             }
 
+            let time = l.time.split('-');
+            time[1] = (time[1]) + (time[1] < 12 ? 'am' : 'pm');
+            time = time[1];
+
             return (
               <View style={styles.lot} key={l.name}>
                 <TouchableOpacity onPress={onPress}>
+                  <Text style={styles.lotTime}>until {time}</Text>
                   <Text style={styles.lotTitle}>{l.name}</Text>
                   <Text style={styles.lotInfo}>{distance} away</Text>
                 </TouchableOpacity>
@@ -129,14 +135,23 @@ const styles = StyleSheet.create({
     fontSize: 20,
     paddingBottom: 4,
     width: '100%',
-    textAlign: 'center'
+    paddingLeft: 15
+  },
+
+  lotTime: {
+    position: 'absolute',
+    fontSize: 14,
+    paddingTop: 2,
+    paddingRight: 15,
+    width: '100%',
+    textAlign: 'right',
+    color: '#666'
   },
 
   lotInfo: {
-    fontSize: 14,
+    fontSize: 16,
     width: '100%',
-    textAlign: 'center',
-    color: '#666'
+    paddingLeft: 15,
   },
 
   noPass: {

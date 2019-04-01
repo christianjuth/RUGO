@@ -48,7 +48,8 @@ export default class App extends React.Component {
         stopId: stop.stop_id,
         stopTitle: stop.name
       });
-      this.props.navigation.setParams({sub: stop.name});
+      let stopName = stop.name.split('-')[0];
+      this.props.navigation.setParams({sub: stopName});
     }
     
     this.refresh();
@@ -146,7 +147,7 @@ export default class App extends React.Component {
                 return '<1';
             }).slice(0, 3).join(', ');
 
-            let text = 'In ' + s + ' minutes';
+            let text = s + ' minutes';
 
             let watch = () => {
               if(this.notificationId){
@@ -170,12 +171,14 @@ export default class App extends React.Component {
               }
             }
 
+            let name = r.name.replace(/\s+shuttle$/i,'');
+
             return (
               <View style={key == this.state.watch ? styles.routeSelected : styles.route} key={key}>
                   <TouchableOpacity onPress={watch}>
-                      <Text style={styles.routeTitle}>{r.name}</Text>
-                      <Text style={styles.routeTitle}>{text}</Text>
-                      <Text style={styles.routeInfo}>{r.destination}</Text>
+                      <Text style={styles.routeTitle}>{name}</Text>
+                      <Text style={styles.routeEstimates}>{text}</Text>
+                      <Text style={styles.routeInfo}>{r.name.length < 6 ? r.destination : ''}</Text>
                   </TouchableOpacity>  
               </View>
             );
@@ -220,15 +223,26 @@ const styles = StyleSheet.create({
     fontSize: 20,
     paddingBottom: 4,
     width: '100%',
-    textAlign: 'center'
+    paddingLeft: 15
   },
 
   routeInfo: {
+    position: 'absolute',
     fontSize: 14,
+    paddingTop: 2,
+    paddingRight: 15,
     width: '100%',
-    textAlign: 'center',
-    color: '#666'
-  }
+    textAlign: 'right',
+    color: '#666',
+  },
+
+  routeEstimates: {
+    fontSize: 16,
+    width: '100%',
+    paddingLeft: 15,
+  },
+
+  
 
 
 });

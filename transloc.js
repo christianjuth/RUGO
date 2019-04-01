@@ -107,7 +107,6 @@ class transloc{
 		})[0];
 	}
 
-
 	closestStop(lat, lng) {
         let stopArray = [];
 
@@ -125,8 +124,9 @@ class transloc{
             return a.distance > b.distance ? 1 : -1;
         });
 
-        let stop = stopArray[0];
-        stop.campus = ruLocate.closestCampus(stop.location.lat, stop.location.lng);
+        let stop = stopArray[0],
+        	sLoc = stop.location;
+        stop.campus = ruLocate.closestCampus(sLoc.lat, sLoc.lng);
         return stop;
     }
 
@@ -174,7 +174,7 @@ class transloc{
 						arrivals[key] = {
 							estimates: [],
 							name: name,
-							destination: `To ${dest}`
+							destination: `to ${dest}`
 						};
 					}
 					let time = Date.parse(a.arrival_at) - Date.now();

@@ -49,6 +49,7 @@ let ruLocate = {
           if(lot != null){
             lot.name = lotName;
             lot.distance = this.distance(lat, lng, lot.lat, lot.lng);
+            lot.time = time;
             squashed.push(lot);
           } else{
             console.log('missing '+lotName);
