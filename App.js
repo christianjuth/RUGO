@@ -1,7 +1,9 @@
 import React from 'react';
 import { Platform, AsyncStorage, StatusBar, StyleSheet, View } from 'react-native';
-import { AppLoading, Asset, Font, Icon } from 'expo';
+import { AppLoading, Asset, Font, Icon, LinearGradient } from 'expo';
 import AppNavigator from './navigation/AppNavigator';
+
+import Colors from './constants/Colors';
 
 export default class App extends React.Component {
   state = {
@@ -62,8 +64,14 @@ export default class App extends React.Component {
     } else {
       return (
         <View style={styles.container}>
+          <LinearGradient
+          start={[0, 0]}
+          end={[1, 0]}
+          colors={[Colors.graidentLeft, Colors.graidentRight]}
+          style={{ flex: 1}}>
           {Platform.OS === 'ios' && <StatusBar barStyle="light-content" />}
           <AppNavigator />
+          </LinearGradient>
         </View>
       );
     }

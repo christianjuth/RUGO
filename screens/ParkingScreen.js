@@ -66,7 +66,7 @@ export default class LinksScreen extends React.Component {
   }
 
   render() {
-    return this.state.lots.length > 0 ? (
+    return this.state.lots != null ? (
 
       <ScrollView style={styles.container}>
 
@@ -83,9 +83,7 @@ export default class LinksScreen extends React.Component {
             let onPress = () => {
               showLocation({ 
                 latitude: l.lat, 
-                longitude: l.lng,
-                sourceLatitude: loc.lat,
-                sourceLongitude: loc.lng
+                longitude: l.lng
               });
             }
 

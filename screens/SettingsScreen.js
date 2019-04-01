@@ -11,6 +11,7 @@ export default class SettingsScreen extends React.Component {
   constructor() {
   	super();
   	this.state = {
+      isLoading: true,
   		parkingPass: 'none'
   	}
   	this.loadSettings();
@@ -20,12 +21,17 @@ export default class SettingsScreen extends React.Component {
   	AsyncStorage.getItem('parkingPass')
 	  .then(value => {
 	    this.setState({
+        isLoading: false,
 	    	parkingPass: value
 	    })
   	});
   }
 
   render() {
+    if (this.state.isLoading) {
+      return(<View></View>);
+    }
+
     return (
     	<View style={styles.container}>
     		<Text style={styles.title}>Parking Pass</Text>
@@ -59,7 +65,7 @@ const styles = StyleSheet.create({
   title: {
     fontSize: 20,
     width: '100%',
-    textAlign: 'center'
+    textAlign: 'center',
   },
 
   picker: {

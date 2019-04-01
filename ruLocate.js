@@ -25,7 +25,7 @@ let ruLocate = {
       let campuses = ruLocate.closestCampus(lat, lng);
 
       if(typeof data.parkingPasses[pass] == 'undefined'){
-        return []
+        return null;
       }
 
       let lots = data.parkingPasses[pass][campuses];
@@ -36,8 +36,9 @@ let ruLocate = {
         // start and finish times.
         let range = key.split('-'),
             date = new Date(),
-            hour = date.getHours() + date.getMinutes()/60;
-        return hour > range[0] || hour < range[1];
+            hour = date.getHours() + date.getMinutes()/60,
+            isWeekend = !(date.getDay() % 6);
+        return isWeekend || hour > range[0] || hour < range[1];
       });
 
       // put everything into 1D array
@@ -45,9 +46,13 @@ let ruLocate = {
       validTimes.forEach(time => {
         lots[time].forEach(lotName => {
           let lot = data.parkingLots[lotName];
-          lot.name = lotName;
-          lot.distance = this.distance(lat, lng, lot.lat, lot.lng);
-          squashed.push(lot);
+          if(lot != null){
+            lot.name = lotName;
+            lot.distance = this.distance(lat, lng, lot.lat, lot.lng);
+            squashed.push(lot);
+          } else{
+            console.log('missing '+lotName);
+          }
         });
       });
 

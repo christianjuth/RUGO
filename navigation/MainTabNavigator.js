@@ -1,6 +1,7 @@
 import React from 'react';
-import { Platform } from 'react-native';
-import { createStackNavigator, createBottomTabNavigator } from 'react-navigation';
+import { Platform, View, StyleSheet } from 'react-native';
+import { createStackNavigator, createBottomTabNavigator, Header } from 'react-navigation';
+import { LinearGradient } from 'expo';
 
 import TabBarIcon from '../components/TabBarIcon';
 import HomeScreen from '../screens/HomeScreen';
@@ -9,10 +10,25 @@ import SettingsScreen from '../screens/SettingsScreen';
 
 import Colors from '../constants/Colors';
 
+const GradientHeader = props => {
+  return(
+    <View>
+      <LinearGradient 
+        start={[0, 0]}
+        end={[1, 0]}
+        colors={[Colors.graidentLeft, Colors.graidentRight]}
+      >
+        <Header {...props} />
+      </LinearGradient>
+    </View>
+  );
+}
+
 let stackOptions = {
   defaultNavigationOptions: {
+    header: props => <GradientHeader {...props} />,
     headerStyle: {
-      backgroundColor: Colors.rutgers,
+      backgroundColor: 'transparent',
       height: 70
     },
     headerTintColor: Colors.tabIconSelected,
@@ -76,7 +92,7 @@ export default createBottomTabNavigator({
       activeTintColor: Colors.tabIconSelected,
       inactiveTintColor: Colors.tabIconDefault,
       style: {
-        backgroundColor: Colors.rutgers
+        backgroundColor: 'transparent'
       }
     }
 });

@@ -1,5 +1,15 @@
 import React from 'react';
-import { YellowBox, ScrollView, AppState, StyleSheet, Text, View } from 'react-native';
+import { YellowBox, ScrollView, AppState, StyleSheet, Text, TouchableOpacity, View, Platform } from 'react-native';
+import { Constants, Notifications, Permissions } from 'expo';
+
+async function getiOSNotificationPermission() {
+  const { status } = await Permissions.getAsync(
+    Permissions.NOTIFICATIONS
+  );
+  if (status !== 'granted') {
+    await Permissions.askAsync(Permissions.NOTIFICATIONS);
+  }
+}
 // YellowBox.ignoreWarnings(['Require cycle:']);
 
 import GlobalStyles from '../assets/Styles';
@@ -26,7 +36,8 @@ export default class App extends React.Component {
       stopId: '',
       stopTitle: '',
       arrivals: {},
-      state: 'active'
+      state: 'active',
+      watch: ''
     };
   }
 
@@ -43,9 +54,36 @@ export default class App extends React.Component {
     this.refresh();
   }
 
+  notify(title, body, time) {
+    (async () => {
+      this.notificationId = await Notifications.scheduleLocalNotificationAsync({
+        title: title,
+        body: body,
+        android: {
+          sound: true,
+        },
+        ios: {
+          sound: true,
+        },
+      },
+      { time: Date.now() + time});
+    })();
+  }
+
+  listenForNotifications = () => {
+    Notifications.addListener(notification => {
+      this.notificationId = null;
+      this.setState({
+        watch: ''
+      });
+    });
+  };
+
 
   componentDidMount() {
     AppState.addEventListener('change', this._handleAppStateChange);
+    getiOSNotificationPermission();
+    this.listenForNotifications();
 
     session.load(() => {
       this.checkLocation();
@@ -57,8 +95,8 @@ export default class App extends React.Component {
     // count down
     this.intervalTwo = setInterval(() => {
       Object.keys(this.state.arrivals).forEach(r => {
-        let arrivals = this.state.arrivals[r];
-        arrivals.estimates = arrivals.estimates.map(p => {
+        let route = this.state.arrivals[r];
+        route.estimates = route.estimates.map(p => {
           return p - 1000;
         }).filter(r => r > 0);
       });
@@ -110,14 +148,36 @@ export default class App extends React.Component {
 
             let text = 'In ' + s + ' minutes';
 
-           
+            let watch = () => {
+              if(this.notificationId){
+                Notifications.cancelScheduledNotificationAsync(this.notificationId);
+              }
+              
+              if(this.state.watch == key){
+                this.notificationId = null;
+                this.setState({watch: ''});
+              }
+              else{
+                this.setState({watch: key});
+                let estimate = r.estimates[0];
+                if(estimate != null && estimate > 60000){
+                  // delay is time estimate - 10%
+                  // or time r.estimates[0] - 1 min 
+                  // (whichever is greater)
+                  let delay = estimate - Math.max(estimate/5, 60000);
+                  this.notify(r.name, 'Next bus is close!', delay);
+                }
+              }
+            }
 
             return (
-              <View style={styles.route} key={key}>
+              <View style={key == this.state.watch ? styles.routeSelected : styles.route} key={key}>
+                  <TouchableOpacity onPress={watch}>
                       <Text style={styles.routeTitle}>{r.name}</Text>
                       <Text style={styles.routeTitle}>{text}</Text>
                       <Text style={styles.routeInfo}>{r.destination}</Text>
-                    </View>
+                  </TouchableOpacity>  
+              </View>
             );
           })
         }
@@ -145,6 +205,15 @@ const styles = StyleSheet.create({
     width: '100%',
     borderBottomColor: '#eee',
     borderBottomWidth: 1
+  },
+
+  routeSelected: {
+    paddingTop: 10,
+    paddingBottom: 10,
+    width: '100%',
+    borderBottomColor: '#eee',
+    borderBottomWidth: 1,
+    backgroundColor: '#eee'
   },
 
   routeTitle: {
