@@ -4,6 +4,7 @@ import { AppLoading, Asset, Font, Icon, LinearGradient, Location } from 'expo';
 import AppNavigator from './navigation/AppNavigator';
 
 import Colors from './constants/Colors';
+global.log = {};
 
 export default class App extends React.Component {
   state = {
@@ -74,7 +75,7 @@ export default class App extends React.Component {
           colors={[Colors.graidentLeft, Colors.graidentRight]}
           style={{ flex: 1}}>
           {Platform.OS === 'ios' && <StatusBar barStyle="light-content" />}
-          <AppNavigator />
+          <AppNavigator/>
           </LinearGradient>
         </View>
       );
@@ -111,6 +112,6 @@ export default class App extends React.Component {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#fff',
-  },
+    backgroundColor: '#f00',
+  }
 });

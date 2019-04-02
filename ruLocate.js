@@ -45,7 +45,7 @@ let ruLocate = {
       let squashed = [];
       validTimes.forEach(time => {
         lots[time].forEach(lotName => {
-          let lot = data.parkingLots[lotName];
+          let lot = data.Lot[lotName];
           if(lot != null){
             lot.name = lotName;
             lot.distance = this.distance(lat, lng, lot.lat, lot.lng);
@@ -67,11 +67,11 @@ let ruLocate = {
     },
 
     closestCampus(lat, lng) {
-      data.campuses.sort((a, b) => {
+      data.Campuse.sort((a, b) => {
           return this.distance(lat, lng, a.lat, a.lng) > this.distance(lat, lng, b.lat, b.lng) ? 1 : -1;
       });
 
-      return data.campuses[0].name;
+      return data.Campuse[0].name;
     }
 }
 

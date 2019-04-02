@@ -2,7 +2,7 @@ const tintColor = '#eee';
 
 export default {
   tintColor,
-  tabIconDefault: '#81233A',
+  tabIconDefault: 'rgba(255, 255, 255, 0.4)',
   tabIconSelected: tintColor,
   tabBar: '#fefefe',
   errorBackground: 'red',
@@ -11,7 +11,7 @@ export default {
   warningText: '#666804',
   noticeBackground: tintColor,
   noticeText: '#fff',
-  rutgers: '#cc0033',
-  graidentLeft: '#D5325B',
-  graidentRight: '#CE1D49',
+  rutgers: '#C33555',
+  graidentLeft: '#2c3e50',
+  graidentRight: '#546A83',
 };

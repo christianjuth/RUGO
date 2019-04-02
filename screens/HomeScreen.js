@@ -1,6 +1,12 @@
 import React from 'react';
 import { YellowBox, ScrollView, AppState, StyleSheet, Text, TouchableOpacity, View, Platform } from 'react-native';
 import { Constants, Notifications, Permissions } from 'expo';
+import Ripple from 'react-native-material-ripple';
+
+import {
+  widthPercentageToDP as wp,
+  heightPercentageToDP as hp
+} from 'react-native-responsive-screen';
 
 async function getiOSNotificationPermission() {
   const { status } = await Permissions.getAsync(
@@ -133,8 +139,8 @@ export default class App extends React.Component {
 
   render() {
     return (
-      <View style={styles.container}>
-        <ScrollView style={styles.scroll}>
+      <ScrollView style={styles.container}>
+        <View style={styles.scroll}>
         {
           Object.keys(this.state.arrivals).map((key) => {
             let r = this.state.arrivals[key];
@@ -173,19 +179,20 @@ export default class App extends React.Component {
 
             let name = r.name.replace(/\s+shuttle$/i,'');
 
+            let selected = key == this.state.watch;
+
             return (
-              <View style={key == this.state.watch ? styles.routeSelected : styles.route} key={key}>
-                  <TouchableOpacity onPress={watch}>
-                      <Text style={styles.routeTitle}>{name}</Text>
-                      <Text style={styles.routeEstimates}>{text}</Text>
-                      <Text style={styles.routeInfo}>{r.name.length < 6 ? r.destination : ''}</Text>
-                  </TouchableOpacity>  
-              </View>
+              <Ripple style={selected ? styles.selectedRoute : styles.route} onPress={watch} key={key} rippleColor='rgba(0,0,0,0.15)'>
+                <Text style={selected ? styles.selectedRouteTitle : styles.routeTitle}>{name}</Text>
+                <Text style={selected ? styles.selectedRouteEstimates : styles.routeEstimates}>{text}</Text>
+                <Text style={selected ? styles.selectedRouteInfo : styles.routeInfo}>{r.name.length < 6 ? r.destination : ''}</Text>
+              </Ripple>
             );
           })
         }
-        </ScrollView>
-      </View>
+        </View>
+      </ScrollView>
+      
     );
   }
 }
@@ -193,53 +200,101 @@ export default class App extends React.Component {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#fff',
-    alignItems: 'center',
-    justifyContent: 'flex-start',
+    backgroundColor: '#E4E9EF',
   },
 
   scroll: {
-    width: '100%'
+    padding: 7
   },
 
   route: {
     paddingTop: 10,
     paddingBottom: 10,
     width: '100%',
-    borderBottomColor: '#eee',
-    borderBottomWidth: 1
-  },
-
-  routeSelected: {
-    paddingTop: 10,
-    paddingBottom: 10,
-    width: '100%',
-    borderBottomColor: '#eee',
-    borderBottomWidth: 1,
-    backgroundColor: '#eee'
+    marginBottom: 4,
+    backgroundColor: '#fff',
+    borderRadius: 5,
+    shadowColor: "#666",
+    shadowOffset: {
+      width: 0,
+      height: 1,
+    },
+    shadowOpacity: 0.25,
+    shadowRadius: 5,
+    elevation: 2,
   },
 
   routeTitle: {
-    fontSize: 20,
+    fontSize: wp('2%') + 16,
     paddingBottom: 4,
     width: '100%',
-    paddingLeft: 15
+    paddingLeft: 15,
+    fontWeight: '500'
   },
 
   routeInfo: {
     position: 'absolute',
-    fontSize: 14,
-    paddingTop: 2,
-    paddingRight: 15,
+    fontSize: wp('2%') + 10,
+    top: 12,
+    right: 15,
     width: '100%',
     textAlign: 'right',
-    color: '#666',
+    color: '#999',
+    fontWeight: '100'
   },
 
   routeEstimates: {
-    fontSize: 16,
+    fontSize: wp('2%') + 10,
     width: '100%',
     paddingLeft: 15,
+    fontWeight: '100'
+  },
+
+
+  selectedRoute: {
+    paddingTop: 10,
+    paddingBottom: 10,
+    width: '100%',
+    marginBottom: 4,
+    backgroundColor: '#fff',
+    borderRadius: 5,
+    shadowColor: "#666",
+    shadowOffset: {
+      width: 0,
+      height: 1,
+    },
+    shadowOpacity: 0.25,
+    shadowRadius: 5,
+    elevation: 2,
+    backgroundColor: '#48dbfb'
+  },
+
+  selectedRouteTitle: {
+    fontSize: wp('2%') + 16,
+    paddingBottom: 4,
+    width: '100%',
+    paddingLeft: 15,
+    fontWeight: '500',
+    color: '#fff'
+  },
+
+  selectedRouteInfo: {
+    position: 'absolute',
+    fontSize: wp('2%') + 10,
+    top: 12,
+    right: 15,
+    width: '100%',
+    textAlign: 'right',
+    fontWeight: '100',
+    color: '#fff'
+  },
+
+  selectedRouteEstimates: {
+    fontSize: wp('2%') + 10,
+    width: '100%',
+    paddingLeft: 15,
+    fontWeight: '100',
+    color: '#fff'
   },
 
   

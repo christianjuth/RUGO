@@ -1,11 +1,17 @@
 import React from 'react';
 import { ScrollView, TouchableOpacity, AsyncStorage, Text, Image, View, StyleSheet } from 'react-native';
 import { WebBrowser } from 'expo';
+import Ripple from 'react-native-material-ripple';
 
 import GlobalStyles from '../assets/Styles';
 
 let ruLocate = require('../ruLocate.js');
-import { showLocation } from 'react-native-map-link'
+import { showLocation } from 'react-native-map-link';
+
+import {
+  widthPercentageToDP as wp,
+  heightPercentageToDP as hp
+} from 'react-native-responsive-screen';
 
 export default class LinksScreen extends React.Component {
   static navigationOptions = ({ navigation }) => {
@@ -70,6 +76,7 @@ export default class LinksScreen extends React.Component {
     return this.state.lots != null ? (
 
       <ScrollView style={styles.container}>
+        <View style={styles.padding}>
 
 
         {
@@ -93,16 +100,15 @@ export default class LinksScreen extends React.Component {
             time = time[1];
 
             return (
-              <View style={styles.lot} key={l.name}>
-                <TouchableOpacity onPress={onPress}>
-                  <Text style={styles.lotTime}>until {time}</Text>
-                  <Text style={styles.lotTitle}>{l.name}</Text>
-                  <Text style={styles.lotInfo}>{distance} away</Text>
-                </TouchableOpacity>
-              </View>
+              <Ripple style={styles.lot} key={l.name} onPress={onPress} rippleColor='rgba(0,0,0,0.15)'>
+                <Text style={styles.lotTime}>until {time}</Text>
+                <Text style={styles.lotTitle}>{l.name}</Text>
+                <Text style={styles.lotInfo}>{distance} away</Text>
+              </Ripple>
             )
           })
         }
+        </View>
       </ScrollView>
 
       ) : (
@@ -120,38 +126,54 @@ export default class LinksScreen extends React.Component {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#fff',
+    backgroundColor: '#E4E9EF'
+  },
+
+  padding: {
+    padding: 7
   },
 
   lot: {
     paddingTop: 10,
     paddingBottom: 10,
     width: '100%',
-    borderBottomColor: '#eee',
-    borderBottomWidth: 1
+    marginBottom: 4,
+    backgroundColor: '#fff',
+    borderRadius: 5,
+    shadowColor: "#666",
+    shadowOffset: {
+      width: 0,
+      height: 1,
+    },
+    shadowOpacity: 0.25,
+    shadowRadius: 5,
+    elevation: 2,
   },
 
   lotTitle: {
-    fontSize: 20,
+    fontSize: wp('2%') + 14,
     paddingBottom: 4,
     width: '100%',
-    paddingLeft: 15
+    paddingLeft: 15,
+    fontWeight: '500'
   },
 
   lotTime: {
     position: 'absolute',
-    fontSize: 14,
-    paddingTop: 2,
-    paddingRight: 15,
+    fontSize: wp('2%') + 10,
+    top: 12,
+    right: 15,
     width: '100%',
     textAlign: 'right',
-    color: '#666'
+    color: '#999',
+    fontWeight: '100'
   },
 
   lotInfo: {
-    fontSize: 16,
+    fontSize: wp('2%') + 10,
     width: '100%',
     paddingLeft: 15,
+    fontWeight: '100'
   },
 
   noPass: {
